@@ -1,0 +1,71 @@
+# Node.js
+node_modules/
+npm-debug.log
+.env # Environment variables should never be committed
+/dist # Build output directory (if you compile your backend code)
+
+# NPM packages
+.npm/
+
+# Logs
+*.log
+logs/
+*.jks # Java Keystore files (if any Java components are involved, though less common in pure MERN)
+
+# MongoDB (if local DB files are created in the project directory)
+/data/db/ # Default MongoDB data directory if you run mongod within the project
+
+# React Frontend (assuming 'client' directory)
+client/build/ # Production build output
+client/node_modules/
+client/.env # Frontend environment variables (if any, though often handled via build process)
+client/npm-debug.log*
+client/.DS_Store # macOS specific
+client/*.log
+
+# IDE and OS files
+.DS_Store # macOS specific
+.vscode/ # VS Code settings
+.idea/ # IntelliJ/WebStorm project files
+*.suo # Visual Studio solution user options
+*.user # Visual Studio user files
+*.bak # Backup files
+*~ # Emacs backup files
+# Thumbs.db # Windows thumbnail cache
+# ehthumbs.db # Windows thumbnail cache
+# Desktop.ini # Windows custom folder settings
+
+# Temporary files
+tmp/
+temp/
+
+# Editor-specific files
+.swp # Vim swap files
+.swo
+.swn
+
+# Test coverage results
+coverage/
+.nyc_output/
+
+# Dependency directories
+bower_components/ # If you were using Bower (less common now)
+
+# Visual Studio Code workspace files
+.vscode/
+
+# Package-lock and Yarn.lock files (choose one based on your package manager)
+# package-lock.json # Uncomment if you want to ignore this (though generally recommended to commit)
+# yarn.lock # Uncomment if you want to ignore this (though generally recommended to commit)
+
+# Docker files (if you use Docker)
+docker-compose.override.yml # Override files are often ignored
+*.pem # Private keys (if any)
+*.crt # Certificates (if any)
+
+# Other potentially large or sensitive files
+*.zip
+*.tar
+*.gz
+*.rar
+*.7z
