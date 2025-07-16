@@ -69,3 +69,6 @@ docker-compose.override.yml # Override files are often ignored
 *.gz
 *.rar
 *.7z
+# React Component Preview
+previewConfig.json
+.idea/
