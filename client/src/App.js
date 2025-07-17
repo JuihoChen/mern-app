@@ -5,46 +5,63 @@ import AddItemForm from './components/AddItemForm'; // Import the new component
 import ItemList from './components/ItemList';       // Import the new component
 
 function App() {
-  const [items, setItems] = useState([]);
-  // newItemName, newItemDescription, newItemQuantity are now managed inside AddItemForm
+    const [items, setItems] = useState([]);
+    // newItemName, newItemDescription, newItemQuantity are now managed inside AddItemForm
 
-  // Function to fetch items from the backend
-  const fetchItems = () => {
-    axios.get('http://localhost:5000/items/')
-      .then(response => {
-        setItems(response.data);
-      })
-      .catch(error => {
-        console.error("There was an error fetching the items!", error);
-      });
-  };
+    // --- Define your backend URL here ---
+    // Use your laptop's IP if accessing from another device, or 'localhost' if only on this machine.
+    // For development, consider configuring a proxy in client/package.json.
+    const BACKEND_URL = 'http://localhost:5000'; // <<< Make sure this is correct
 
-  // useEffect to fetch items when the component mounts
-  useEffect(() => {
-    fetchItems();
-  }, []); // Empty dependency array means this runs once on mount
+    // Function to fetch items from the backend
+    const fetchItems = () => {
+        axios.get(`${BACKEND_URL}/items/`) // Use BACKEND_URL
+            .then(response => {
+                setItems(response.data);
+            })
+            .catch(error => {
+                console.error("There was an error fetching the items!", error);
+            });
+    };
 
-  // Function to handle adding a new item (passed to AddItemForm)
-  const handleAddItem = (newItem) => { // newItem is now passed from AddItemForm
-    axios.post('http://localhost:5000/items/add', newItem)
-      .then(res => {
-        console.log(res.data); // 'Item added!' from backend goes here
-        fetchItems(); // Refresh the list of items after adding
-      })
-      .catch(error => console.error("Error adding item:", error));
-  };
+    // useEffect to fetch items when the component mounts
+    useEffect(() => {
+        fetchItems();
+    }, []); // Empty dependency array means this runs once on mount
 
-  return (
-    <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
-      <h1>MERN Stack App</h1>
+    // Function to handle adding a new item (passed to AddItemForm)
+    const handleAddItem = (newItem) => { // newItem is now passed from AddItemForm
+        axios.post(`${BACKEND_URL}/items/add`, newItem) // Use BACKEND_URL
+            .then(res => {
+                console.log(res.data); // 'Item added!' from backend goes here
+                fetchItems(); // Refresh the list of items after adding
+            })
+            .catch(error => console.error("Error adding item:", error));
+    };
 
-      {/* Render the AddItemForm component */}
-      <AddItemForm onAddItem={handleAddItem} />
+    // --- NEW: Function to handle deleting an item ---
+    const handleDeleteItem = (id) => {
+        axios.delete(`${BACKEND_URL}/items/${id}`) // Use BACKEND_URL
+            .then(res => {
+                console.log(res.data); // 'Item deleted.' from backend goes here
+                fetchItems(); // Refresh the list of items after deleting
+            })
+            .catch(error => {
+                console.error("Error deleting item:", error);
+            });
+    };
 
-      {/* Render the ItemList component */}
-      <ItemList items={items} />
-    </div>
-  );
+    return (
+        <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
+            <h1>MERN Stack App</h1>
+
+            {/* Render the AddItemForm component */}
+            <AddItemForm onAddItem={handleAddItem} />
+
+            {/* Render the ItemList component - NOW PASSING handleDeleteItem and BACKEND_URL */}
+            <ItemList items={items} onDeleteItem={handleDeleteItem} backendUrl={BACKEND_URL} />
+        </div>
+    );
 }
 
 export default App;
