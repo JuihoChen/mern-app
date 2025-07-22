@@ -39,7 +39,7 @@ function App() {
             .catch(error => console.error("Error adding item:", error));
     };
 
-    // --- NEW: Function to handle deleting an item ---
+    // --- Function to handle deleting an item ---
     const handleDeleteItem = (id) => {
         axios.delete(`${BACKEND_URL}/items/${id}`) // Use BACKEND_URL
             .then(res => {
@@ -51,6 +51,21 @@ function App() {
             });
     };
 
+    // --- Function to handle updating an item ---
+    const handleUpdateItem = (id, updatedItem) => {
+        // IMPORTANT: Your backend's update route '/update/:id' uses a POST method.
+        // So we must use axios.post here to match it.
+        axios.post(`${BACKEND_URL}/items/update/${id}`, updatedItem) // Changed from .put to .post
+            .then(res => {
+                console.log(res.data); // 'Item updated!' from backend goes here
+                fetchItems(); // Refresh the list after updating
+            })
+            .catch(error => {
+                console.error("Error updating item:", error);
+            });
+    };
+
+
     return (
         <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
             <h1>MERN Stack App</h1>
@@ -58,8 +73,8 @@ function App() {
             {/* Render the AddItemForm component */}
             <AddItemForm onAddItem={handleAddItem} />
 
-            {/* Render the ItemList component - NOW PASSING handleDeleteItem and BACKEND_URL */}
-            <ItemList items={items} onDeleteItem={handleDeleteItem} backendUrl={BACKEND_URL} />
+            {/* Render the ItemList component - NOW PASSING handleDeleteItem and onUpdateItem */}
+            <ItemList items={items} onDeleteItem={handleDeleteItem} onUpdateItem={handleUpdateItem} />
         </div>
     );
 }

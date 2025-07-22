@@ -1,4 +1,4 @@
-// client/src/AddItemForm.js
+// client/src/components/AddItemForm.js
 import React, { useState } from 'react';
 
 function AddItemForm({ onAddItem }) { // onAddItem will be a prop (a function from App.js)
