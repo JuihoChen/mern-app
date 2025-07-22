@@ -37,10 +37,10 @@ Before you start, make sure you have the following installed:
     * **Installation on Ubuntu:**
         ```bash
         # Import the public key used by the package management system
-        wget -qO - [https://www.mongodb.org/static/pgp/server-7.0.asc](https://www.mongodb.org/static/pgp/server-7.0.asc) | sudo apt-key add -
+        wget -qO - https://www.mongodb.org/static/pgp/server-7.0.asc | sudo apt-key add -
 
         # Create a list file for MongoDB
-        echo "deb [ arch=amd64,arm64 ] [https://repo.mongodb.org/apt/ubuntu](https://repo.mongodb.org/apt/ubuntu) $(lsb_release -cs)/mongodb-org/7.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-7.0.list
+        echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu $(lsb_release -cs)/mongodb-org/7.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-7.0.list
 
         # Reload local package database
         sudo apt update
