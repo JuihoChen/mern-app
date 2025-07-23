@@ -1,61 +1,53 @@
-# Specify the Docker Compose file format version
 version: '3.8'
-
-# Define the services that make up your application
 services:
   # MongoDB database service
   mongo:
-    image: mongo:latest # Use the official MongoDB image from Docker Hub
-    container_name: mongodb_container # Assign a recognizable name to the container
+    image: mongo:latest
+    container_name: mongodb_container
     ports:
-      - "27017:27017" # Map host port 27017 to container port 27017 (MongoDB's default)
+      - "27017:27017"
     volumes:
-      # Create a named volume for persistent MongoDB data.
-      # This ensures your data is not lost when the container is stopped or removed.
       - mongo-data:/data/db
     networks:
-      - mern-network # Connect to our custom network
+      - mern-network
 
   # Backend service (Node.js/Express)
   backend:
-    # Build the image from the Dockerfile in the current directory (mern-app root)
-    build: .
-    container_name: backend_container # Assign a recognizable name to the container
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: backend_container
     ports:
-      - "5000:5000" # Map host port 5000 to container port 5000 (Express app's port)
+      - "5000:5000"
     environment:
-      # Set the MongoDB connection URI for the backend.
-      # 'mongo' is the service name defined above, which acts as the hostname within the Docker network.
-      MONGO_URI: mongodb://mongo:27017/mern_db # Replace 'mydatabase' with your actual DB name
+      MONGO_URI: mongodb://mongo:27017/mern_db
     depends_on:
-      - mongo # Ensure the 'mongo' service starts before the 'backend'
+      - mongo
     networks:
-      - mern-network # Connect to our custom network
+      - mern-network
 
   # Frontend service (React)
   frontend:
-    # Build the image from the Dockerfile in the 'client' directory
-    build: ./client
-    container_name: frontend_container # Assign a recognizable name to the container
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+      # --- IMPORTANT CHANGE: Pass REACT_APP_API_URL as a build argument ---
+      args:
+        REACT_APP_API_URL: http://10.255.114.96:5000 # This value will be available during the build
+    container_name: frontend_container
     ports:
-      # Map host port 3000 to container port 80 (where Nginx serves the React app).
-      # This allows you to access your React app at http://localhost:3000.
       - "3000:80"
-    environment:
-      # This environment variable will be available in your React app
-      # It points to the backend's exposed port on the host machine
-      REACT_APP_API_URL: http://localhost:5000 # <--- ADD THIS LINE
+    # --- Remove 'environment' for REACT_APP_API_URL here, as it's for runtime, not buildtime ---
+    # environment:
+    #   REACT_APP_API_URL: http://localhost:5000 # This line is no longer needed here for buildtime variables
     depends_on:
-      - backend # Ensure the 'backend' service starts before the 'frontend'
+      - backend
     networks:
-      - mern-network # Connect to our custom network
+      - mern-network
 
-# Define named volumes for persistent data storage
-volumes:
-  mongo-data: # This volume will store MongoDB data
-
-# Define custom networks for inter-service communication
 networks:
-  mern-network: # All services will communicate over this network
-    driver: bridge # Use the default bridge network driver
+  mern-network:
+    driver: bridge
 
+volumes:
+  mongo-data:

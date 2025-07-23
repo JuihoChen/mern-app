@@ -1,79 +1,72 @@
 // client/src/App.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react'; // Import useCallback
 import axios from 'axios';
-import AddItemForm from './components/AddItemForm'; // Import the new component
-import ItemList from './components/ItemList';       // Import the new component
+import AddItemForm from './components/AddItemForm';
+import ItemList from './components/ItemList';
 
 function App() {
     const [items, setItems] = useState([]);
-    // newItemName, newItemDescription, newItemQuantity are now managed inside AddItemForm
 
-    // --- Define your backend URL here ---
-    // Use your laptop's IP if accessing from another device, or 'localhost' if only on this machine.
-    // For development, consider configuring a proxy in client/package.json.
-    const BACKEND_URL = 'http://localhost:5000'; // <<< Make sure this is correct
+    const BACKEND_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
-    // Function to fetch items from the backend
-    const fetchItems = () => {
-        axios.get(`${BACKEND_URL}/items/`) // Use BACKEND_URL
+    // --- Add this console.log to see the resolved URL ---
+    console.log('Frontend using BACKEND_URL:', BACKEND_URL);
+
+    // --- Wrap fetchItems in useCallback to make it stable ---
+    const fetchItems = useCallback(() => {
+        axios.get(`${BACKEND_URL}/items/`)
             .then(response => {
                 setItems(response.data);
             })
             .catch(error => {
                 console.error("There was an error fetching the items!", error);
             });
-    };
+    }, [BACKEND_URL]); // fetchItems depends on BACKEND_URL, so include it here
 
     // useEffect to fetch items when the component mounts
+    // Now, fetchItems is stable, so including it in the dependency array is safe.
     useEffect(() => {
         fetchItems();
-    }, []); // Empty dependency array means this runs once on mount
+    }, [fetchItems]); // Include fetchItems in the dependency array
 
-    // Function to handle adding a new item (passed to AddItemForm)
-    const handleAddItem = (newItem) => { // newItem is now passed from AddItemForm
-        axios.post(`${BACKEND_URL}/items/add`, newItem) // Use BACKEND_URL
+    // Function to handle adding a new item
+    const handleAddItem = useCallback((newItem) => {
+        axios.post(`${BACKEND_URL}/items/add`, newItem)
             .then(res => {
-                console.log(res.data); // 'Item added!' from backend goes here
-                fetchItems(); // Refresh the list of items after adding
+                console.log(res.data);
+                fetchItems(); // Call fetchItems to refresh the list
             })
             .catch(error => console.error("Error adding item:", error));
-    };
+    }, [BACKEND_URL, fetchItems]); // handleAddItem depends on BACKEND_URL and fetchItems
 
-    // --- Function to handle deleting an item ---
-    const handleDeleteItem = (id) => {
-        axios.delete(`${BACKEND_URL}/items/${id}`) // Use BACKEND_URL
+    // Function to handle deleting an item
+    const handleDeleteItem = useCallback((id) => {
+        axios.delete(`${BACKEND_URL}/items/${id}`)
             .then(res => {
-                console.log(res.data); // 'Item deleted.' from backend goes here
-                fetchItems(); // Refresh the list of items after deleting
+                console.log(res.data);
+                fetchItems(); // Call fetchItems to refresh the list
             })
             .catch(error => {
                 console.error("Error deleting item:", error);
             });
-    };
+    }, [BACKEND_URL, fetchItems]); // handleDeleteItem depends on BACKEND_URL and fetchItems
 
-    // --- Function to handle updating an item ---
-    const handleUpdateItem = (id, updatedItem) => {
-        // IMPORTANT: Your backend's update route '/update/:id' uses a POST method.
-        // So we must use axios.post here to match it.
-        axios.post(`${BACKEND_URL}/items/update/${id}`, updatedItem) // Changed from .put to .post
+    // Function to handle updating an item
+    const handleUpdateItem = useCallback((id, updatedItem) => {
+        axios.post(`${BACKEND_URL}/items/update/${id}`, updatedItem)
             .then(res => {
-                console.log(res.data); // 'Item updated!' from backend goes here
-                fetchItems(); // Refresh the list after updating
+                console.log(res.data);
+                fetchItems(); // Call fetchItems to refresh the list
             })
             .catch(error => {
                 console.error("Error updating item:", error);
             });
-    };
-
+    }, [BACKEND_URL, fetchItems]); // handleUpdateItem depends on BACKEND_URL and fetchItems
 
     return (
         <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
             <h1>MERN Stack App</h1>
-
-            {/* Render the AddItemForm component */}
             <AddItemForm onAddItem={handleAddItem} />
-
-            {/* Render the ItemList component - NOW PASSING handleDeleteItem and onUpdateItem */}
             <ItemList items={items} onDeleteItem={handleDeleteItem} onUpdateItem={handleUpdateItem} />
         </div>
     );
