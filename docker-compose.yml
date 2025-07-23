@@ -1,0 +1,61 @@
+# Specify the Docker Compose file format version
+version: '3.8'
+
+# Define the services that make up your application
+services:
+  # MongoDB database service
+  mongo:
+    image: mongo:latest # Use the official MongoDB image from Docker Hub
+    container_name: mongodb_container # Assign a recognizable name to the container
+    ports:
+      - "27017:27017" # Map host port 27017 to container port 27017 (MongoDB's default)
+    volumes:
+      # Create a named volume for persistent MongoDB data.
+      # This ensures your data is not lost when the container is stopped or removed.
+      - mongo-data:/data/db
+    networks:
+      - mern-network # Connect to our custom network
+
+  # Backend service (Node.js/Express)
+  backend:
+    # Build the image from the Dockerfile in the current directory (mern-app root)
+    build: .
+    container_name: backend_container # Assign a recognizable name to the container
+    ports:
+      - "5000:5000" # Map host port 5000 to container port 5000 (Express app's port)
+    environment:
+      # Set the MongoDB connection URI for the backend.
+      # 'mongo' is the service name defined above, which acts as the hostname within the Docker network.
+      MONGO_URI: mongodb://mongo:27017/mern_db # Replace 'mydatabase' with your actual DB name
+    depends_on:
+      - mongo # Ensure the 'mongo' service starts before the 'backend'
+    networks:
+      - mern-network # Connect to our custom network
+
+  # Frontend service (React)
+  frontend:
+    # Build the image from the Dockerfile in the 'client' directory
+    build: ./client
+    container_name: frontend_container # Assign a recognizable name to the container
+    ports:
+      # Map host port 3000 to container port 80 (where Nginx serves the React app).
+      # This allows you to access your React app at http://localhost:3000.
+      - "3000:80"
+    environment:
+      # This environment variable will be available in your React app
+      # It points to the backend's exposed port on the host machine
+      REACT_APP_API_URL: http://localhost:5000 # <--- ADD THIS LINE
+    depends_on:
+      - backend # Ensure the 'backend' service starts before the 'frontend'
+    networks:
+      - mern-network # Connect to our custom network
+
+# Define named volumes for persistent data storage
+volumes:
+  mongo-data: # This volume will store MongoDB data
+
+# Define custom networks for inter-service communication
+networks:
+  mern-network: # All services will communicate over this network
+    driver: bridge # Use the default bridge network driver
+
