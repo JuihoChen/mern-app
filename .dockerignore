@@ -1,3 +1,33 @@
-# .dockerignore in mern-app/
+# Exclude the frontend directory entirely if the backend Dockerfile doesn't need it
+client/
+
+# Node.js specific exclusions for the backend
 node_modules
+npm-debug.log
+yarn-error.log
+
+# Environment files (sensitive data)
 .env
+.env.*.local
+
+# Version control
+.git
+.gitignore
+.gitattributes
+
+# Editor and IDE specific files
+.vscode
+.idea
+
+# Build artifacts and temporary files
+dist
+build
+tmp/
+logs/
+*.log
+
+# Docker-related files (not needed inside the image)
+Dockerfile
+docker-compose.yml
+docker-compose.*.yml
+.dockerignore

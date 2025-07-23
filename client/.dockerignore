@@ -1,0 +1,19 @@
+# Node.js specific exclusions for the frontend
+node_modules
+npm-debug.log
+yarn-error.log
+
+# Environment files (sensitive data)
+.env
+.env.*.local
+
+# Build artifacts and temporary files (from frontend build, before it's copied to Nginx)
+build # If you have a separate build output folder in client/ that's copied later
+dist
+tmp/
+logs/
+*.log
+
+# Editor and IDE specific files
+.vscode
+.idea
