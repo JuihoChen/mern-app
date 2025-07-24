@@ -25,6 +25,20 @@
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
     <title>React App</title>
+
+    <!-- Tailwind CSS CDN - This will load Tailwind directly in the browser -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Optional: Configure Tailwind JIT if needed (though CDN often has it built-in) -->
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            // Your custom theme extensions from tailwind.config.js can go here
+            // Example: colors: { 'custom-blue': '#1da1f2' },
+          }
+        }
+      }
+    </script>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>

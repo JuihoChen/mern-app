@@ -36,7 +36,7 @@ services:
         REACT_APP_API_URL: http://10.255.114.96:5000 # This value will be available during the build
     container_name: frontend_container
     ports:
-      - "3000:80"
+      - "3000:3000"
     # --- Remove 'environment' for REACT_APP_API_URL here, as it's for runtime, not buildtime ---
     # environment:
     #   REACT_APP_API_URL: http://localhost:5000 # This line is no longer needed here for buildtime variables
