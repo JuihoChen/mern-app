@@ -1,5 +1,5 @@
 # Use a Node.js base image for the backend application.
-FROM node:18-alpine
+FROM node:22-alpine
 
 # Update package lists and upgrade packages to reduce vulnerabilities
 RUN apk update && apk upgrade

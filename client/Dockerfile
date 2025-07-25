@@ -1,7 +1,7 @@
 # client/Dockerfile
 
 # Stage 1: Build the React application
-FROM node:18-alpine AS frontend_builder
+FROM node:22-alpine AS frontend_builder
 
 # Set build argument for API URL
 ARG REACT_APP_API_URL
@@ -24,7 +24,7 @@ COPY . .
 RUN CI=true npm run build
 
 # Stage 2: Serve the built application with a lightweight web server
-FROM node:18-alpine
+FROM node:22-alpine
 WORKDIR /app
 
 # Copy the build output from the builder stage
